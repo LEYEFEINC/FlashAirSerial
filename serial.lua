@@ -7,7 +7,7 @@ STATE_SPEED = 0
 STATE_TR = 1
 
 function send_serial_command(data)
-	fa.serial(data)
+	fa.serial("write", data .. "\r\n")
 	print("send_serial_command data[" .. data .. "]")
 end
 
@@ -15,20 +15,20 @@ function controlSpeed(speednum, tr)
 	if(speednum < 0) then return end
 	if(speednum > 200) then return end
 	if (tr == 1) then
-		sendtxt = "M0F" .. speednum/2 .. "\r\n"
+		sendtxt = "M0F" .. speednum/2
 		send_serial_command(sendtxt)
 	else
-		sendtxt = "M0R" .. speednum/2 .. "\r\n"
+		sendtxt = "M0R" .. speednum/2
 		send_serial_command(sendtxt)
 	end
 end
 
 function motorDriverOpen()
-	send_serial_command("E\r\n")
+	send_serial_command("E")
 end
 
 function motorDriverClose()
-	send_serial_command("D\r\n")
+	send_serial_command("D")
 end
 
 function getSharedMem()
@@ -55,6 +55,7 @@ motorDriverOpen()
 
 local r = initSharedMem()
 if(r ~= 1) then
+  motorDriverClose()
   return
 end
 sleep(1000)
